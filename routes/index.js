@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const User = require('../models/user');
+const User = require('../models/User');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -44,11 +44,12 @@ router.post('/signup', function (req, res, next) {
       password: password,
     }
     // Use schema.create to insert data into the db
-    User.create(userData, (err, user) => {
-      if (err) {
-        return next(err)
+    User.create(userData, function (error, user) {
+      if (error) {
+        return next(error);
       } else {
-        return res.redirect('/');
+        req.session.userId = user._id;
+        return res.redirect('/profile');
       }
     });
   } else {
@@ -57,6 +58,22 @@ router.post('/signup', function (req, res, next) {
     err.status = 400;
     return next(err);
   }
+});
+
+
+// GET route after registering
+router.get('/profile', function (req, res, next) {
+  User.findById(req.session.userId)
+    .exec(function (error, user) {
+      if (error) {
+        return next(error);
+      } else {
+        return res.json({
+          username: user.username,
+          email: user.email
+        });
+      }
+    });
 });
 
 module.exports = router;
