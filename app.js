@@ -48,10 +48,14 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 // Mongo store for session data
-// app.use(session({
-//   secret: 'foo',
-//   store: new MongoStore(options)
-// }));
+app.use(session({
+  secret: 'foo',
+  resave: false,
+  saveUninitialized: true,
+  store: new MongoStore({
+    mongooseConnection: mongoose.connection
+  })
+}));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
