@@ -70,7 +70,7 @@ router.get('/profile', function (req, res, next) {
       } else {
         return res.json({
           username: user.username,
-          email: user.email
+          email: user.email,
         });
       }
     });
