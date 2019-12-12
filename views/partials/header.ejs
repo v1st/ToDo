@@ -12,17 +12,21 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700,900&display=swap" rel="stylesheet">
 
-    <title><%= title %></title>
+    <title><%= data.title ? title : 'Task.io' %></title>
 </head>
 
 <body>
     <header>
         <nav class="navbar navbar-light">
             <div class="container">
-                <a href="/" class="navbar-brand"><%= title %></a>
+                <a href="/" class="navbar-brand"><%= data.title ? title : 'Task.io' %></a>
                 <div>
+                    <% if(data.isLoggedIn) { %>
+                    <a class="btn btn-link" href="/login" role="button">Login</a>
+                    <% } else { %>
                     <a class="btn btn-primary" href="/signup" role="button">Signup</a>
                     <a class="btn btn-link" href="/login" role="button">Login</a>
+                    <% } %>
                 </div>
             </div>
         </nav>

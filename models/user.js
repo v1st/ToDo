@@ -33,7 +33,7 @@ UserSchema.statics.authenticate = function (email, password, callback) {
                 err.status = 401;
                 return callback(err);
             }
-
+            // Validate password
             bcrypt.compare(password, user.password, function (err, result) {
                 if (result === true) {
                     return callback(null, user);
@@ -47,7 +47,7 @@ UserSchema.statics.authenticate = function (email, password, callback) {
 // Hashing password before saving it to the database
 UserSchema.pre('save', function (next) {
     let user = this;
-
+    
     bcrypt.hash(user.password, 10, function (err, hash) {
         if (err) {
             return next(err);
