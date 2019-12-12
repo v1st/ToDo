@@ -1,21 +1,27 @@
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
+
 
 const User = require('../models/User');
 
-/* GET home page. */
+/* GET /
+  Home Page
+*/
 router.get('/', function (req, res, next) {
   res.render('index', {
-    data: {
-      
-    }
+    data: {},
+    user: req.user
   });
 });
 
-/* GET signup page. */
+/* GET /signup
+  Signup page. 
+*/
 router.get('/signup', function (req, res, next) {
   res.render('signup', {
-    title: 'Task.io'
+    title: 'Task.io',
+    data: {}
   });
 });
 
@@ -83,43 +89,25 @@ router.get('/profile', function (req, res, next) {
 router.get('/login', function (req, res, next) {
   res.render('login', {
     title: 'Task.io',
-    isLoggedIn: true
+    data: {}
   });
 });
 
 // POST Login page
-router.post('/login', function (req, res, next) {
-  const {
-    loginEmail,
-    loginPassword
-  } = req.body;
+router.post('/login', passport.authenticate('local', {
+    failureRedirect: '/login'
+  }),
+  function (req, res) {
+    res.redirect('/');
+  });
 
-  if (loginEmail && loginPassword) {
-    User.authenticate(loginEmail, loginPassword, function (err, user) {
-      if (err || !user) {
-        let error = new Error('Wrong email or password.');
-        error.status = 401;
-        return next(error);
-      } else {
-        req.session.userId = user._id;
-        return res.redirect('/profile');
-      }
-    });
-  }
-});
 
 // GET Logout
-router.get('/logout', function (req, res, next) {
-  if (req.session) {
-    // delete session object
-    req.session.destroy(function (err) {
-      if (err) {
-        return next(err);
-      } else {
-        return res.redirect('/');
-      }
-    });
-  }
-});
+router.get('/logout',
+  function (req, res) {
+    req.logout();
+    res.redirect('/');
+  });
+
 
 module.exports = router;

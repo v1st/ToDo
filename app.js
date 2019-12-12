@@ -5,19 +5,19 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session = require('express-session')
 const MongoStore = require('connect-mongo')(session);
-
+const passport = require('passport');
 const keys = require('./config/keys');
+require('./config/passport');
 // Routers
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-
+// Create express app
 const app = express();
-
 // Database Connection
 const mongoose = require('mongoose');
-
 // Setup defualt mongoose connection
 const mongoDB = keys.DB_URL;
+
 mongoose.connect(mongoDB, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -32,6 +32,10 @@ db.once('open', function () {
   console.log('connected');
 });
 
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+
 // Mongo store for session data
 app.use(session({
   secret: 'randomPassword',
@@ -41,11 +45,6 @@ app.use(session({
     mongooseConnection: mongoose.connection
   })
 }));
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({
@@ -53,7 +52,9 @@ app.use(express.urlencoded({
 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(passport.initialize());
+app.use(passport.session());
+// Routers
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 

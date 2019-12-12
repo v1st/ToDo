@@ -20,10 +20,15 @@ const UserSchema = new mongoose.Schema({
     }
 });
 
+// Validate Password
+UserSchema.methods.validatePassword = function (password) {
+    return bcrypt.compare(password, this.password);
+}
+
 // Authenticate input against database
-UserSchema.statics.authenticate = function (email, password, callback) {
+UserSchema.statics.authenticate = function (username, password, callback) {
     User.findOne({
-            email: email
+            username: username
         })
         .exec(function (err, user) {
             if (err) {
@@ -47,7 +52,7 @@ UserSchema.statics.authenticate = function (email, password, callback) {
 // Hashing password before saving it to the database
 UserSchema.pre('save', function (next) {
     let user = this;
-    
+
     bcrypt.hash(user.password, 10, function (err, hash) {
         if (err) {
             return next(err);
@@ -56,6 +61,7 @@ UserSchema.pre('save', function (next) {
         next();
     })
 });
+
 
 const User = mongoose.model('User', UserSchema);
 
