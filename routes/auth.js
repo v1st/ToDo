@@ -9,8 +9,9 @@ const User = require('../models/User');
  */
 router.get('/signup', function (req, res, next) {
     res.render('signup', {
-        title: 'Task.io',
-        data: {}
+        data: {
+            title: 'Task.io',
+        }
     });
 });
 
@@ -67,8 +68,9 @@ router.post('/signup', function (req, res, next) {
  */
 router.get('/login', function (req, res, next) {
     res.render('login', {
-        title: 'Task.io',
-        data: {}
+        data: {
+            title: 'Task.io',
+        }
     });
 });
 
@@ -78,7 +80,7 @@ router.get('/login', function (req, res, next) {
  */
 router.post('/login',
     passport.authenticate('local', {
-        successRedirect: '/',
+        successRedirect: '/dashboard',
         failureRedirect: '/login',
     })
 );
