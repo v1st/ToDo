@@ -22,7 +22,6 @@
                 <a href="/" class="navbar-brand">Task.io</a>
                 <div>
                     <% if(locals.user) { %>
-                        <p><%= locals.user.username %></p>
                     <a class="btn btn-link" href="/logout" role="button">Logout</a>
                     <% } else { %>
                     <a class="btn btn-primary" href="/signup" role="button">Signup</a>

@@ -5,22 +5,25 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session = require('express-session')
 const MongoStore = require('connect-mongo')(session);
+const mongoose = require('mongoose');
 const passport = require('passport');
 const keys = require('./config/keys');
+const mongoDB = keys.DB_URL;
 require('./config/passport');
+
 // Routers
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+const authRouter = require('./routes/auth');
+const dashboardRouter = require('./routes/dashboard');
+
 // Create express app
 const app = express();
-// Database Connection
-const mongoose = require('mongoose');
-// Setup defualt mongoose connection
-const mongoDB = keys.DB_URL;
 
+// Setup defualt mongoose connection
 mongoose.connect(mongoDB, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  useCreateIndex: true,
 });
 
 // Get the default connection
@@ -29,10 +32,10 @@ const db = mongoose.connection;
 // Bind connection to error event (to get notification of connection error)
 db.on('error', console.error.bind(console, 'MongoDB connection error'));
 db.once('open', function () {
-  console.log('connected');
+  console.log('Connected to mongoDB.');
 });
 
-// view engine setup
+// View engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
@@ -52,11 +55,15 @@ app.use(express.urlencoded({
 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Initialize Passport and restore authentication state, if any, from the session
 app.use(passport.initialize());
 app.use(passport.session());
+
 // Routers
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/', authRouter);
+app.use('/dashboard', dashboardRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
