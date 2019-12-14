@@ -39,22 +39,24 @@ db.once('open', function () {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// Mongo store for session data
-app.use(session({
-  secret: 'randomPassword',
-  resave: true,
-  saveUninitialized: false,
-  store: new MongoStore({
-    mongooseConnection: mongoose.connection
-  })
-}));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(logger('dev'));
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({
   extended: false
 }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+
+// Mongo store for session data
+app.use(session({
+  secret: 'randomPassword',
+  resave: true,
+  saveUninitialized: true,
+  store: new MongoStore({
+    url: mongoDB,
+    collection: 'sessions'
+  })
+}));
 
 // Initialize Passport and restore authentication state, if any, from the session
 app.use(passport.initialize());

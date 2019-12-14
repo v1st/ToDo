@@ -50,7 +50,12 @@ router.post('/signup', function (req, res, next) {
                 return next(error);
             } else {
                 req.session.userId = user._id;
-                return res.redirect('/dashboard');
+                req.login(user, function (err) {
+                    if (err) {
+                        return next(err);
+                    }
+                    return res.redirect('/dashboard');
+                });
             }
         });
     } else {
@@ -79,11 +84,14 @@ router.get('/login', function (req, res, next) {
  * Login to user account
  */
 router.post('/login',
-    passport.authenticate('local', {
-        successRedirect: '/dashboard',
-        failureRedirect: '/login',
-    })
-);
+    passport.authenticate('local'),
+    function (req, res) {
+        // If this function gets called, authentication was successful.
+        // `req.user` contains the authenticated user.
+        req.session.save(function () {
+            res.redirect('/dashboard');
+        });
+    });
 
 
 /**
