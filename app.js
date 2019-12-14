@@ -50,8 +50,11 @@ app.use(express.urlencoded({
 // Mongo store for session data
 app.use(session({
   secret: 'randomPassword',
-  resave: true,
-  saveUninitialized: true,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 900000
+  },
   store: new MongoStore({
     url: mongoDB,
     collection: 'sessions'

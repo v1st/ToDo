@@ -89,7 +89,7 @@ router.post('/login',
         // If this function gets called, authentication was successful.
         // `req.user` contains the authenticated user.
         req.session.save(function () {
-            res.redirect('/dashboard');
+            return res.redirect('/dashboard');
         });
     });
 
@@ -101,7 +101,9 @@ router.post('/login',
 router.get('/logout',
     function (req, res) {
         req.logout();
-        res.redirect('/');
+        req.session.destroy(function (err) {
+            res.redirect('/');
+        });
     });
 
 
