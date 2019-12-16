@@ -51,7 +51,7 @@ UserSchema.statics.authenticate = function (username, password, callback) {
 
 // Hashing password before saving it to the database
 UserSchema.pre('save', function (next) {
-    let user = this;
+    const user = this;
 
     bcrypt.hash(user.password, 10, function (err, hash) {
         if (err) {

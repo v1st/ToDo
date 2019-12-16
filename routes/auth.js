@@ -106,5 +106,4 @@ router.get('/logout',
         });
     });
 
-
 module.exports = router;
