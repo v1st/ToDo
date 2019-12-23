@@ -39,6 +39,8 @@ db.once('open', function () {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+// Serve the static files from the React app
+app.use(express.static(path.join(__dirname, 'client/build')));
 // Middleware
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(logger('dev'));

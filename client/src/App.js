@@ -1,15 +1,12 @@
 import React from 'react';
 import './App.css';
-import Home from './pages/Index';
-import Nav from './components/organisms/NavBar';
-import Footer from './components/organisms/Footer';
+import Home from './pages/Home';
 
 function App() {
   return (
     <div className="App">
-      <Nav />      
+      <h1>TEST</h1>
         <Home />      
-      <Footer />      
     </div>
   );
 }
