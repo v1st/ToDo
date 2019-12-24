@@ -4,3 +4,32 @@
   padding: 0;
 }
 
+.app {
+  min-height: 100vh;
+}
+
+.sidebar {
+  background-color: #4e73df;
+  background-image: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+  background-size: cover;
+  min-height: 100vh;
+  max-width: 14rem;
+  color: #FFFFFF;
+}
+
+.sidebar-divider {
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.content {
+  background-color: #f5f6f9;
+
+}
+
+main {
+  min-height: 100vh;
+}
+
+/* #AEAFE8 */
+/* #f5f6f9 */
+/* #FFFFFF */
