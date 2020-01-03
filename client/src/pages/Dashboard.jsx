@@ -8,18 +8,23 @@ export default class Dashboard extends Component {
   constructor() {
     super();
     this.state = {
-      projects: [{
-        id: 1, name: 'Tasks',
-        todos: [{ id: 1, content: 'First Test', isCompleted: false }]
-      },
-      {
-        id: 2, name: 'In Progress',
-        todos: [{ id: 1, content: 'Testing', isCompleted: false }, { id: 2, content: 'Working', isCompleted: false }]
-      },
-      {
-        id: 3, name: 'Done',
-        todos: [{ id: 1, content: 'First Test', isCompleted: false }]
-      },
+      projects: [
+        {
+          id: 1, name: 'Todo List', lists: [
+            {
+              id: 1, name: 'Tasks',
+              todos: [{ id: 1, content: 'First Test', isCompleted: false }]
+            },
+            {
+              id: 2, name: 'In Progress',
+              todos: [{ id: 1, content: 'Testing', isCompleted: false }, { id: 2, content: 'Working', isCompleted: false }]
+            },
+            {
+              id: 3, name: 'Done',
+              todos: [{ id: 1, content: 'First Test', isCompleted: false }]
+            },
+          ]
+        },
       ]
     }
   }
@@ -129,21 +134,13 @@ export default class Dashboard extends Component {
 
 
 
-  createTodoAtIndex = (project, i) => {
+  createTodoAtIndex = (list, i) => {
     const id = uuid();
-    project.todos.unshift({ id: id, content: 'Testing', isCompleted: false })
-    // newTodos.splice(i + 1, 0, {
-    //   id: id,
-    //   content: 'task',
-    //   isCompleted: false,
-    // });
+    list.todos.unshift({ id: id, content: 'Testing', isCompleted: false })
+
     this.setState({
       projects: this.state.projects
     })
-    // setTodos(newTodos);
-    // setTimeout(() => {
-    //   document.forms[0].elements[i + 1].focus();
-    // }, 0);
   }
 
   updateTodoAtIndex = (e, i, list) => {
@@ -152,49 +149,53 @@ export default class Dashboard extends Component {
     this.setState({ [list]: newTodos });
   }
 
-  removeTodoAtIndex = (project, todo) => {
-    const filteredTodos = project.todos.filter(task => task.id !== todo.id);
-    this.setState({
-      projects: this.state.projects.map(prevProject => {
-        if (prevProject.id === project.id) {
-          return { ...prevProject, todos: filteredTodos };
-        } else return prevProject;
-      })
+  removeTodoAtIndex = (project, list, todo) => {
+    const filteredTodos = list.todos.filter(task => task.id !== todo.id);
+    const newTodos = this.state.projects.map(prevProject => {
+      if (prevProject.id !== project.id) return prevProject;
+
+      return {
+        ...prevProject,
+        lists: prevProject.lists.map(prevList => {
+          if (prevList.name !== list.name) return prevList;
+
+          return { ...prevList, todos: filteredTodos }
+        })
+      }
     })
-    // if (i === 0 && this.state.projects.length === 1) return;
-    // setTodos(todos => todos.slice(0, i).concat(todos.slice(i + 1, todos.length)));
-    // setTimeout(() => {
-    //   document.forms[0].elements[i - 1].focus();
-    // }, 0);
+
+    this.setState({ projects: newTodos })
   }
 
   toggleTodoCompleteAtIndex = (i, list) => {
     const temporaryTodos = [...this.state[list]];
     temporaryTodos[i].isCompleted = !temporaryTodos[i].isCompleted;
     this.setState({ e: temporaryTodos });
-    // setTodos(temporaryTodos);
   }
 
   render() {
     return (
-      <div className="app container-fluid">
+      <div className="app container-fluid" >
         <div className="row">
-          <Sidebar />
+          <Sidebar projects={this.state.projects} />
           <div className="content col p-0">
             <Navbar />
             <main className="px-4 ">
               <div className="row">
                 {this.state.projects.map(project => {
-                  return (
-                    <CardList
-                      key={project.id}
-                      project={project}
-                      onCreate={this.createTodoAtIndex}
-                      onKeyDown={this.handleKeyDown}
-                      onChange={this.updateTodoAtIndex}
-                      onToggle={this.toggleTodoCompleteAtIndex}
-                      onDelete={this.removeTodoAtIndex} />
-                  )
+                  return project.lists.map(list => {
+                    return (
+                      <CardList
+                        key={list.id}
+                        project={project}
+                        list={list}
+                        onCreate={this.createTodoAtIndex}
+                        onKeyDown={this.handleKeyDown}
+                        onChange={this.updateTodoAtIndex}
+                        onToggle={this.toggleTodoCompleteAtIndex}
+                        onDelete={this.removeTodoAtIndex} />
+                    )
+                  })
                 })}
               </div>
             </main>

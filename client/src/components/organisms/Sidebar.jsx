@@ -7,21 +7,17 @@ export default class Sidebar extends Component {
         <ul>
           <a className="h2 nav-link font-weight-bold py-3 mb-0" href="#">task.io</a>
           <hr className="sidebar-divider mx-3 my-0"></hr>
-          <div className="nav-item">
-            <a className="nav-link py-3" href="#">
-              <span>Tasks</span>
-            </a>
-          </div>
-          <div className="nav-item">
-            <a className="nav-link py-3" href="#">
-              <span>In Progress</span>
-            </a>
-          </div>
-          <div className="nav-item">
-            <a className="nav-link py-3" href="#">
-              <span>Done</span>
-            </a>
-          </div>
+          {
+            this.props.projects.map(project => {
+              return (
+                <div className="nav-item" key={project.id}>
+                  <a className="nav-link py-3" href="#">
+                    <span>{project.name}</span>
+                  </a>
+                </div>
+              )
+            })
+          }
           <hr className="sidebar-divider mx-3 my-0"></hr>
         </ul>
       </aside>
