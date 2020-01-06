@@ -21,6 +21,10 @@ export default class Card extends Component {
     this.setState({
       isEditing: bool,
     })
+    if (bool === false) {
+      // Update content in app state
+      this.props.onChangeTodo(this.props.todo, this.state.content);
+    }
   }
 
   handleKeyDown = (event, type) => {

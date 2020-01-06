@@ -9,6 +9,10 @@ export default class CardList extends Component {
       onCreate(project, list)
     }
 
+    function onChangeTodo(todo, newContent) {
+      onChange(project, list, todo, newContent)
+    }
+
     function onDeleteTodo(todo) {
       onDelete(project, list, todo)
     }
@@ -25,7 +29,7 @@ export default class CardList extends Component {
         </div>
         <div className="col px-0">
           {list.todos.map((todo) => (
-            <Card key={todo.id} todo={todo} content={todo.content} onKeyDown={onKeyDown} onChange={onChange} onToggle={onToggle} onDeleteTodo={onDeleteTodo} />
+            <Card key={todo.id} todo={todo} content={todo.content} onKeyDown={onKeyDown} onChangeTodo={onChangeTodo} onToggle={onToggle} onDeleteTodo={onDeleteTodo} />
           ))}
         </div>
       </div>

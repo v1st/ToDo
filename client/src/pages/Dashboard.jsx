@@ -109,10 +109,27 @@ export default class Dashboard extends Component {
     })
   }
 
-  updateTodoAtIndex = (e, i, list) => {
-    const newTodos = [...this.state[list]];
-    newTodos[i].content = e.target.value;
-    this.setState({ [list]: newTodos });
+  updateTodoAtIndex = (project, list, todo, newContent) => {
+    const newList = list.todos.map(prevTodo => {
+      if(prevTodo.id !== todo.id) return prevTodo;
+
+      return { ...todo, content: newContent };
+    });
+    
+    const newProject = this.state.projects.map(prevProject => {
+      if (prevProject.id !== project.id) return prevProject;
+
+      return {
+        ...prevProject,
+        lists: prevProject.lists.map(prevList => {
+          if (prevList.name !== list.name) return prevList;
+
+          return { ...prevList, todos: newList }
+        })
+      }
+    })
+
+    this.setState({ projects: newProject })
   }
 
   removeTodoAtIndex = (project, list, todo) => {
