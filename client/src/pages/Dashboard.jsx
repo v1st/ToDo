@@ -27,67 +27,11 @@ export default class Dashboard extends Component {
         },
       ]
     }
-  } 
+  }
 
-  // handleKeyDown = (e, i) => {
-  //   if (e.key === 'Enter') {
-  //     this.createTodoAtIndex(e, i);
-  //   }
-  //   if (e.key === 'Backspace' && todos[i].content === '') {
-  //     e.preventDefault();
-  //     return this.removeTodoAtIndex(i);
-  //   }
-  // }
-
-
-  //   /**
-  //  * Sets the given project id as active and switches to displaying its TODOs if
-  //  * currently on another screen.
-  //  */
-  // setActiveProject(projectId) {
-  //   this.setState({
-  //     activeProjectId: projectId
-  //   , page: Page.TODO_LISTS
-  //   })
-  // },
-
-  // addProject(projectName) {
-  //   var id = uuid()
-  //   this.state.projects.push({id: id, name: projectName, doing: null, todos: []})
-  //   this.setState({projects: this.state.projects})
-  // },
-
-  // editProjectName(project, projectName) {
-  //   project.name = projectName
-  //   this.setState({projects: this.state.projects})
-  // },
-
-  // /**
-  //  * Deletes a project and sets the next adjacent project as active if there are
-  //  * any.
-  //  */
-  // deleteProject(project, index) {
-  //   this.state.projects.splice(index, 1)
-  //   var activeProjectId = this.state.activeProjectId
-  //   if (this.state.projects.length === 0) {
-  //     activeProjectId = null
-  //   }
-  //   else if (activeProjectId === project.id) {
-  //     if (index <= this.state.projects.length - 1) {
-  //       activeProjectId = this.state.projects[index].id
-  //     }
-  //     else {
-  //       activeProjectId = this.state.projects[index - 1].id
-  //     }
-  //   }
-  //   this.setState({
-  //     activeProjectId: activeProjectId
-  //   , projects: this.state.projects
-  //   })
-  // },
-
-
-  // Need to update this function so it does not mutate state
+  /**
+   * Create a todo within selected list
+   */
   createTodoAtIndex = (project, list) => {
     const id = uuid();
     const newList = [{ id: id, content: 'New Task', isCompleted: false }, ...list.todos]
@@ -109,13 +53,16 @@ export default class Dashboard extends Component {
     })
   }
 
+  /**
+   * Update existing todo with new content
+   */
   updateTodoAtIndex = (project, list, todo, newContent) => {
     const newList = list.todos.map(prevTodo => {
-      if(prevTodo.id !== todo.id) return prevTodo;
+      if (prevTodo.id !== todo.id) return prevTodo;
 
       return { ...todo, content: newContent };
     });
-    
+
     const newProject = this.state.projects.map(prevProject => {
       if (prevProject.id !== project.id) return prevProject;
 
@@ -132,6 +79,9 @@ export default class Dashboard extends Component {
     this.setState({ projects: newProject })
   }
 
+  /**
+   * Delete todo from list
+   */
   removeTodoAtIndex = (project, list, todo) => {
     const filteredTodos = list.todos.filter(task => task.id !== todo.id);
     const newProject = this.state.projects.map(prevProject => {
@@ -148,12 +98,6 @@ export default class Dashboard extends Component {
     })
 
     this.setState({ projects: newProject })
-  }
-
-  toggleTodoCompleteAtIndex = (i, list) => {
-    const temporaryTodos = [...this.state[list]];
-    temporaryTodos[i].isCompleted = !temporaryTodos[i].isCompleted;
-    this.setState({ e: temporaryTodos });
   }
 
   render() {
