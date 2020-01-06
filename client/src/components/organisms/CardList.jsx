@@ -6,7 +6,7 @@ export default class CardList extends Component {
     const { list, project, onCreate, onKeyDown, onChange, onToggle, onDelete } = this.props;
 
     function addTodo() {
-      onCreate(list)
+      onCreate(project, list)
     }
 
     function onDeleteTodo(todo) {

@@ -5,8 +5,8 @@ import Navbar from '../components/organisms/Navbar';
 import CardList from '../components/organisms/CardList';
 
 export default class Dashboard extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       projects: [
         {
@@ -27,37 +27,7 @@ export default class Dashboard extends Component {
         },
       ]
     }
-  }
-
-  // // Add todo handler
-  // addTodo = (list, val) => {
-  //   // Assemble data
-  //   const todo = {
-  //     content: 'test',
-  //     isCompleted: false,
-  //   };
-
-  //   this.setState({ [list]: [todo, ...this.state[list]] });
-  //   // Update data
-  //   // axios.post(this.apiUrl, todo).then(res => {
-  //   //   this.state.data.push(res.data);
-  //   //   this.setState({ data: this.state.data });
-  //   // });
-  // }
-
-  // // Handle remove
-  // removeTodo = (list, id) => {
-  //   // Filter all todos except the one to be removed
-  //   const remainder = this.state[list].filter(todo => {
-  //     if (todo.id !== id) return todo;
-  //   });
-
-  //   this.setState({ [list]: remainder });
-  //   // Update state with filter
-  //   // axios.delete(this.apiUrl + "/" + id).then(res => {
-  //   //   this.setState({ data: remainder });
-  //   // });
-  // }
+  } 
 
   // handleKeyDown = (e, i) => {
   //   if (e.key === 'Enter') {
@@ -92,21 +62,6 @@ export default class Dashboard extends Component {
   //   this.setState({projects: this.state.projects})
   // },
 
-  // moveProjectUp(project, index) {
-  //   this.state.projects.splice(index - 1, 0, this.state.projects.splice(index, 1)[0])
-  //   this.setState({projects: this.state.projects})
-  // },
-
-  // moveProjectDown(project, index) {
-  //   this.state.projects.splice(index + 1, 0, this.state.projects.splice(index, 1)[0])
-  //   this.setState({projects: this.state.projects})
-  // },
-
-  // toggleProjectVisible(project) {
-  //   project.hidden = !project.hidden
-  //   this.setState({projects: this.state.projects})
-  // },
-
   // /**
   //  * Deletes a project and sets the next adjacent project as active if there are
   //  * any.
@@ -132,14 +87,25 @@ export default class Dashboard extends Component {
   // },
 
 
-
-
-  createTodoAtIndex = (list, i) => {
+  // Need to update this function so it does not mutate state
+  createTodoAtIndex = (project, list) => {
     const id = uuid();
-    list.todos.unshift({ id: id, content: 'Testing', isCompleted: false })
+    const newList = [{ id: id, content: 'New Task', isCompleted: false }, ...list.todos]
+    const newProject = this.state.projects.map(prevProject => {
+      if (prevProject.id !== project.id) return prevProject;
+
+      return {
+        ...prevProject,
+        lists: prevProject.lists.map(prevList => {
+          if (prevList.name !== list.name) return prevList;
+
+          return { ...prevList, todos: newList }
+        })
+      }
+    })
 
     this.setState({
-      projects: this.state.projects
+      projects: newProject
     })
   }
 
@@ -151,7 +117,7 @@ export default class Dashboard extends Component {
 
   removeTodoAtIndex = (project, list, todo) => {
     const filteredTodos = list.todos.filter(task => task.id !== todo.id);
-    const newTodos = this.state.projects.map(prevProject => {
+    const newProject = this.state.projects.map(prevProject => {
       if (prevProject.id !== project.id) return prevProject;
 
       return {
@@ -164,7 +130,7 @@ export default class Dashboard extends Component {
       }
     })
 
-    this.setState({ projects: newTodos })
+    this.setState({ projects: newProject })
   }
 
   toggleTodoCompleteAtIndex = (i, list) => {
