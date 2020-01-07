@@ -1,32 +1,37 @@
 import React, { Component } from 'react'
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux'
+import { addTodo, updateTodo, deleteTodo } from '../_actions';
 import uuid from 'uuid';
 import Sidebar from '../components/organisms/Sidebar';
 import Navbar from '../components/organisms/Navbar';
 import CardList from '../components/organisms/CardList';
 
-export default class Dashboard extends Component {
+
+class Dashboard extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      projects: [
-        {
-          id: 1, name: 'Todo List', lists: [
-            {
-              id: 1, name: 'Tasks',
-              todos: [{ id: 1, content: 'First Test', isCompleted: false }]
-            },
-            {
-              id: 2, name: 'In Progress',
-              todos: [{ id: 1, content: 'Testing', isCompleted: false }, { id: 2, content: 'Working', isCompleted: false }]
-            },
-            {
-              id: 3, name: 'Done',
-              todos: [{ id: 1, content: 'First Test', isCompleted: false }]
-            },
-          ]
-        },
-      ]
-    }
+    // this.state = this.props.projects
+    // {
+    //   projects: [
+    //     {
+    //       id: uuid(), name: 'Todo List', lists: [
+    //         {
+    //           id: uuid(), name: 'Tasks',
+    //           todos: [{ id: uuid(), content: 'First Test', isCompleted: false }]
+    //         },
+    //         {
+    //           id: uuid(), name: 'In Progress',
+    //           todos: [{ id: uuid(), content: 'Testing', isCompleted: false }, { id: uuid(), content: 'Working', isCompleted: false }]
+    //         },
+    //         {
+    //           id: 3, name: 'Done',
+    //           todos: [{ id: uuid(), content: 'First Test', isCompleted: false }]
+    //         },
+    //       ]
+    //     },
+    //   ]
+    // }
   }
 
   /**
@@ -104,23 +109,23 @@ export default class Dashboard extends Component {
     return (
       <div className="app container-fluid" >
         <div className="row">
-          <Sidebar projects={this.state.projects} />
+          <Sidebar projects={this.props.projects} />
           <div className="content col p-0">
             <Navbar />
             <main className="px-4 ">
               <div className="row">
-                {this.state.projects.map(project => {
+                {this.props.projects.map(project => {
                   return project.lists.map(list => {
                     return (
                       <CardList
                         key={list.id}
                         project={project}
                         list={list}
-                        onCreate={this.createTodoAtIndex}
+                        onCreate={this.props.addTodo}
                         onKeyDown={this.handleKeyDown}
-                        onChange={this.updateTodoAtIndex}
+                        onChange={this.props.updateTodo}
                         onToggle={this.toggleTodoCompleteAtIndex}
-                        onDelete={this.removeTodoAtIndex} />
+                        onDelete={this.props.deleteTodo} />
                     )
                   })
                 })}
@@ -132,3 +137,18 @@ export default class Dashboard extends Component {
     )
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    projects: state.projects
+  }
+}
+
+const mapDispatchToProps = { addTodo, updateTodo, deleteTodo };
+
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(Dashboard)
+);
