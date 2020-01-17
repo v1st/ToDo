@@ -10,7 +10,7 @@ export default class Sidebar extends Component {
           {
             this.props.projects.map(project => {
               return (
-                <div className="nav-item" key={project.id}>
+                <div className="nav-item" key={project._id}>
                   <a className="nav-link py-3" href="#">
                     <span>{project.name}</span>
                   </a>

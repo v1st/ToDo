@@ -29,7 +29,7 @@ export default class CardList extends Component {
         </div>
         <div className="col px-0">
           {list.todos.map((todo) => (
-            <Card key={todo.id} todo={todo} content={todo.content} onKeyDown={onKeyDown} onChangeTodo={onChangeTodo} onToggle={onToggle} onDeleteTodo={onDeleteTodo} />
+            <Card key={todo._id} todo={todo} content={todo.content} onKeyDown={onKeyDown} onChangeTodo={onChangeTodo} onToggle={onToggle} onDeleteTodo={onDeleteTodo} />
           ))}
         </div>
       </div>

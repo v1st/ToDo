@@ -8,11 +8,11 @@ const User = require('../models/User');
  * Signup page
  */
 router.get('/signup', function (req, res, next) {
-    res.render('signup', {
-        data: {
-            title: 'Task.io',
-        }
-    });
+  res.render('signup', {
+    data: {
+      title: 'Task.io',
+    }
+  });
 });
 
 /**
@@ -20,50 +20,77 @@ router.get('/signup', function (req, res, next) {
  * Register new user
  */
 router.post('/signup', function (req, res, next) {
-    const {
-        email,
-        username,
-        password,
-        passwordConfirm
-    } = req.body;
+  const {
+    email,
+    username,
+    password,
+    passwordConfirm
+  } = req.body;
 
-    // Confirm that user typed same password twice
-    if (password !== passwordConfirm) {
-        const err = new Error('Passwords do not match.');
-        err.status = 400;
-        return next(err);
+  // Confirm that user typed same password twice
+  if (password !== passwordConfirm) {
+    const err = new Error('Passwords do not match.');
+    err.status = 400;
+    return next(err);
+  }
+
+  // Send POST data to user collection
+  if (email &&
+    username &&
+    password &&
+    passwordConfirm) {
+    const startingProjectsData = [{
+      name: 'Todo List',
+      lists: [{
+          name: 'Tasks',
+          todos: [{
+            content: 'New Task',
+            isCompleted: false
+          }]
+        },
+        {
+          name: 'In Progress',
+          todos: [{
+            content: 'New Task',
+            isCompleted: false
+          }]
+        },
+        {
+          name: 'Done',
+          todos: [{
+            content: 'New Task',
+            isCompleted: false
+          }]
+        },
+      ]
+    }]
+    const userData = {
+      email: email,
+      username: username,
+      password: password,
+      projects: [...startingProjectsData],
     }
 
-    // Send POST data to user collection
-    if (email &&
-        username &&
-        password &&
-        passwordConfirm) {
-        const userData = {
-            email: email,
-            username: username,
-            password: password,
-        }
-        // Use schema.create to insert data into the db
-        User.create(userData, function (error, user) {
-            if (error) {
-                return next(error);
-            } else {
-                req.session.userId = user._id;
-                req.login(user, function (err) {
-                    if (err) {
-                        return next(err);
-                    }
-                    return res.redirect('/dashboard');
-                });
-            }
+    // Use schema.create to insert data into the db
+    User.create(userData, function (error, user) {
+      if (error) {
+        return next(error);
+      } else {
+        req.session.userId = user._id;
+        req.login(user, function (err) {
+          if (err) {
+            return next(err);
+          }
+          return res.redirect('/dashboard');
         });
-    } else {
-        const err = new Error('All fields have to be filled out');
+      }
+    });
+  } else {
+    const err = new Error('All fields have to be filled out');
 
-        err.status = 400;
-        return next(err);
-    }
+    err.status = 400;
+    return next(err);
+  }
 });
 
 
@@ -72,11 +99,11 @@ router.post('/signup', function (req, res, next) {
  * Login page
  */
 router.get('/login', function (req, res, next) {
-    res.render('login', {
-        data: {
-            title: 'Task.io',
-        }
-    });
+  res.render('login', {
+    data: {
+      title: 'Task.io',
+    }
+  });
 });
 
 /**
@@ -84,14 +111,14 @@ router.get('/login', function (req, res, next) {
  * Login to user account
  */
 router.post('/login',
-    passport.authenticate('local'),
-    function (req, res) {
-        // If this function gets called, authentication was successful.
-        // `req.user` contains the authenticated user.
-        req.session.save(function () {
-            return res.redirect('/dashboard');
-        });
+  passport.authenticate('local'),
+  function (req, res) {
+    // If this function gets called, authentication was successful.
+    // `req.user` contains the authenticated user.
+    req.session.save(function () {
+      return res.redirect('/dashboard');
     });
+  });
 
 
 /**
@@ -99,11 +126,11 @@ router.post('/login',
  * Logout user and destroy session data
  */
 router.get('/logout',
-    function (req, res) {
-        req.logout();
-        req.session.destroy(function (err) {
-            res.redirect('/');
-        });
+  function (req, res) {
+    req.logout();
+    req.session.destroy(function (err) {
+      res.redirect('/');
     });
+  });
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session = require('express-session')
@@ -40,11 +41,12 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 // Middleware
+app.use(cors());
 app.use(logger('dev'));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({
-  extended: false
+  extended: true
 }));
 
 // Mongo store for session data
@@ -68,9 +70,9 @@ app.use(passport.session());
 // Routers
 app.use('/', indexRouter);
 app.use('/', authRouter);
+app.use('/dashboard', dashboardRouter);
 // Serve the static files from the React app
 app.use(express.static(path.join(__dirname, '/client/build')));
-app.use('/dashboard', dashboardRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
