@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const User = require('../models/set');
+const User = require('../models/User');
 
 /**
  * GET /signup
