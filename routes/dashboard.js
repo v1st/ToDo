@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
-const User = require('../models/User');
-const Todo = require('../models/Todo');
+const User = require('../models/user');
+const Todo = require('../models/todo');
 
 /**
  * GET /dashboard
