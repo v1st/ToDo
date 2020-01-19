@@ -34,6 +34,7 @@ export const addTodo = (project, list) => dispatch => {
     }).then(res =>
       dispatch({
         type: ADD_TODO,
+        newTodos: res.data.newTodos,
         project,
         list
       })
@@ -71,12 +72,6 @@ export const updateTodo = (project, list, todo, newContent) => dispatch => {
 
 // Delete Todo
 export const deleteTodo = (project, list, todo) => dispatch => {
-  // return {
-  //   type: DELETE_TODO,
-  //   project,
-  //   list,
-  //   todo
-  // }
   axios({
       method: 'DELETE',
       url: `/dashboard/state/${todo._id}`,

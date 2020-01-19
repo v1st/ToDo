@@ -26,7 +26,7 @@ router.get('/state', isLoggedIn, function (req, res) {
  * POST /dashboard/state
  * Add todo to databse
  */
-router.post('/state', isLoggedIn, function (req, res) {
+router.post('/state', isLoggedIn, async function (req, res) {
   const newItem = new Todo({
     content: 'New Task',
     isCompleted: false
@@ -34,16 +34,40 @@ router.post('/state', isLoggedIn, function (req, res) {
   const projectID = req.body.project._id;
   const listID = req.body.list._id;
 
+  await User.findOneAndUpdate({
+      "_id": req.user._id,
+      "projects": {
+        "$elemMatch": {
+          "_id": projectID,
+          "lists._id": listID
+        }
+      }
+    }, {
+      "$push": {
+        "projects.$[outer].lists.$[inner].todos": {
+          "$each": [newItem],
+          "$position": 0,
+        },
+      }
+    }, {
+      "arrayFilters": [{
+        "outer._id": projectID
+      }, {
+        "inner._id": listID
+      }]
+    })
+    .catch(err => console.log(err));
+
   User.findOne({
-    username: req.user.username
-  }, function (err, data) {
-    if (err) console.log(err);
+      username: req.user.username
+    }, function (err, data) {
+      if (err) console.log(err);
 
-    data.projects.id(projectID).lists.id(listID).todos.unshift(newItem);
-    data.save();
-  })
-
-  res.end();
+      res.json({
+        newTodos : data.projects.id(projectID).lists.id(listID).todos
+      })
+    })
+    .catch(err => console.log(err));
 });
 
 /**
@@ -84,10 +108,10 @@ router.delete('/state/:id', isLoggedIn, function (req, res) {
 
     data.projects.id(projectID).lists.id(listID).todos.id(todoID).remove();
     data.save();
-  })
+  }).catch(err => console.log(err));
 
   res.end();
-});
+})
 
 
 // route middleware to make sure a user is logged in

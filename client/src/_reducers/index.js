@@ -19,10 +19,7 @@ function projects(state = [], action) {
       }
 
       case ADD_TODO:
-        const newList = [{
-          content: 'New Task',
-          isCompleted: false
-        }, ...action.list.todos]
+        const newList = [...action.newTodos]
 
         return state.map(prevProject => {
           if (prevProject._id !== action.project._id) return prevProject;
