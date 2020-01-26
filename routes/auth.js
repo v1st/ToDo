@@ -10,7 +10,7 @@ const User = require('../models/User');
 router.get('/signup', function (req, res, next) {
   res.render('signup', {
     data: {
-      title: 'Task.io',
+      title: 'Signup',
     }
   });
 });
@@ -29,9 +29,13 @@ router.post('/signup', function (req, res, next) {
 
   // Confirm that user typed same password twice
   if (password !== passwordConfirm) {
-    const err = new Error('Passwords do not match.');
-    err.status = 400;
-    return next(err);
+    res.status(400)
+      .render('signup', {
+        data: {
+          title: 'Signup',
+          warning: "Passwords do not match!"
+        }
+      });
   }
 
   // Send POST data to user collection
@@ -64,12 +68,35 @@ router.post('/signup', function (req, res, next) {
         },
       ]
     }]
+
     const userData = {
       email: email,
       username: username,
       password: password,
       projects: [...startingProjectsData],
     }
+
+    // Check if user or email is already taken
+    User.findOne({
+      $or: [{
+        username
+      }, {
+        email
+      }]
+    }, function (err, found) {
+      if (err) {
+        return next(error);
+      }
+      if (found) {
+        res.status(400)
+          .render('signup', {
+            data: {
+              title: 'Signup',
+              warning: "Email or Username is already taken."
+            }
+          });
+      }
+    });
 
     // Use schema.create to insert data into the db
     User.create(userData, function (error, user) {
@@ -86,13 +113,15 @@ router.post('/signup', function (req, res, next) {
       }
     });
   } else {
-    const err = new Error('All fields have to be filled out');
-
-    err.status = 400;
-    return next(err);
+    res.status(400)
+      .render('signup', {
+        data: {
+          title: 'Signup',
+          warning: "All fields need to be filled."
+        }
+      });
   }
 });
-
 
 /**
  * GET /login
@@ -101,7 +130,7 @@ router.post('/signup', function (req, res, next) {
 router.get('/login', function (req, res, next) {
   res.render('login', {
     data: {
-      title: 'Task.io',
+      title: 'Login',
     }
   });
 });
